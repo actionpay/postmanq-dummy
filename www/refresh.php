@@ -18,6 +18,12 @@ define('MAX_FILES', 10);
 
 require_once BASE_PATH . '/vendor/autoload.php';
 
+function checkDir($dirname) {
+    if (!is_dir($dirname)) {
+        mkdir($dirname, 0777, true);
+    }
+}
+
 function render($filename, $tmpl, $params) {
     ob_start();
     extract($params);
@@ -29,6 +35,9 @@ function render($filename, $tmpl, $params) {
 
     file_put_contents($filename, $out);
 }
+
+checkDir(WWW_PATH);
+checkDir(MAIL_PATH);
 
 $conn = new AMQPConnection();
 $conn->setHost(AMQP_HOSTNAME);
@@ -57,10 +66,6 @@ try {
     $queue->declareQueue();
 
     $queue->bind(EXCHANGE_NAME,$queue->getName());
-
-    if (!is_dir(MAIL_PATH)) {
-        mkdir(MAIL_PATH, 0777, true);
-    }
 
     for ($i = 0;$i < MAX_FILES;$i++) {
         $message = $queue->get(AMQP_AUTOACK);
