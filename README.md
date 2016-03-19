@@ -13,7 +13,7 @@
 	apt-get install php5-imap
     php composer.phar update
     
-далее необходимо поправить значения констант в www/refresh.php на необходимые    
+далее необходимо создать файл с константами config.php по примеру config.example.php    
     
 ## использование
 
