@@ -46,7 +46,11 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Сообщение:</label>
-                                <div class="col-sm-10 form-control-static"><?=$body?></div>
+                                <div class="col-sm-10 form-control-static">
+                                    <div class="embed-responsive embed-responsive-4by3">
+                                        <iframe class="embed-responsive-item" src="<?=$body?>"></iframe>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

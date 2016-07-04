@@ -3,13 +3,15 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('BASE_PATH', realpath(dirname(__FILE__) . DS . '..' . DS));
 define('MAIL_DIR', 'mail');
+define('BODY_DIR', 'body');
 define('WWW_PATH', BASE_PATH . DS . 'www');
 define('MAIL_PATH', WWW_PATH . DS . MAIL_DIR);
-define('AMQP_HOSTNAME', '192.168.13.32');
-define('AMQP_LOGIN', 'solomonov');
-define('AMQP_PASSWORD', 'solomonov');
+define('BODY_PATH', MAIL_PATH . DS . BODY_DIR);
+define('AMQP_HOSTNAME', 'localhost');
+define('AMQP_LOGIN', 'user');
+define('AMQP_PASSWORD', '1q2w3e');
 define('AMQP_PORT', '5672');
-define('AMQP_VHOST', 'solomonov');
+define('AMQP_VHOST', 'binatex');
 define('EXCHANGE_NAME', 'postmanq');
 define('EXCHANGE_TYPE', AMQP_EX_TYPE_FANOUT);
 define('ROUTING_KEY', '');
@@ -38,6 +40,7 @@ function render($filename, $tmpl, $params) {
 
 checkDir(WWW_PATH);
 checkDir(MAIL_PATH);
+checkDir(BODY_PATH);
 
 $conn = new AMQPConnection();
 $conn->setHost(AMQP_HOSTNAME);
@@ -78,8 +81,13 @@ try {
             $subject = $parser->getHeader('subject');
             $from = htmlspecialchars($parser->getHeader('from'));
             $to = htmlspecialchars($parser->getHeader('to'));
+            $date = $parser->getHeader('date');
+            $body = $parser->getMessageBody('html');
 
             $filename = md5($subject . $from . $to . round(microtime(true) * 1000) . rand(0, 999999)) . '.html';
+
+            $body_path = BODY_PATH . DS . $filename;
+            file_put_contents($body_path, $body);
 
             render(
                 MAIL_PATH . DS . $filename,
@@ -88,8 +96,8 @@ try {
                     'subject' => $subject,
                     'from' => $from,
                     'to' => $to,
-                    'date' => $parser->getHeader('date'),
-                    'body' => $parser->getMessageBody('html'),
+                    'date' => $date,
+                    'body' => BODY_DIR.DS.$filename,
                 ]
             );
         } else {
@@ -121,11 +129,14 @@ try {
             --$offset;
         } else {
             $xml = simplexml_load_file($file);
+            $subj = $xml->xpath('.//*[@id = \'subject\']');
+            $to = $xml->xpath('.//*[@id = \'to\']');
+            $date = $xml->xpath('.//*[@id = \'date\']');
             $mails[] = [
                 'link' => '/' . MAIL_DIR . '/' . pathinfo($file, PATHINFO_FILENAME) . '.' . pathinfo($file, PATHINFO_EXTENSION),
-                'subject' => (string)reset($xml->xpath('.//*[@id = \'subject\']')),
-                'to' => htmlspecialchars((string)reset($xml->xpath('.//*[@id = \'to\']'))),
-                'date' => (string)reset($xml->xpath('.//*[@id = \'date\']')),
+                'subject' => (string)reset($subj),
+                'to' => htmlspecialchars((string)reset($to)),
+                'date' => (string)reset($date),
             ];
         }
     }
