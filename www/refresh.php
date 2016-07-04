@@ -2,22 +2,8 @@
 
 define('DS', DIRECTORY_SEPARATOR);
 define('BASE_PATH', realpath(dirname(__FILE__) . DS . '..' . DS));
-define('MAIL_DIR', 'mail');
-define('BODY_DIR', 'body');
-define('WWW_PATH', BASE_PATH . DS . 'www');
-define('MAIL_PATH', WWW_PATH . DS . MAIL_DIR);
-define('BODY_PATH', MAIL_PATH . DS . BODY_DIR);
-define('AMQP_HOSTNAME', 'localhost');
-define('AMQP_LOGIN', 'user');
-define('AMQP_PASSWORD', '1q2w3e');
-define('AMQP_PORT', '5672');
-define('AMQP_VHOST', 'binatex');
-define('EXCHANGE_NAME', 'postmanq');
-define('EXCHANGE_TYPE', AMQP_EX_TYPE_FANOUT);
-define('ROUTING_KEY', '');
-define('QUEUE_NAME', 'postmanq');
-define('MAX_FILES', 10);
 
+require_once BASE_PATH . '/config.php';
 require_once BASE_PATH . '/vendor/autoload.php';
 
 function checkDir($dirname) {
