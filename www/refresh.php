@@ -100,7 +100,7 @@ try {
         return ($time1 < $time2) ? -1 : 1;
     });
 
-    libxml_use_internal_errors(false);
+    libxml_use_internal_errors(true);
     $mails = [];
     $offset = count($files) - MAX_FILES;
     foreach ($files as $i => $file) {
