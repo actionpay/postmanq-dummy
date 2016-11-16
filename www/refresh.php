@@ -108,7 +108,7 @@ try {
             unlink($file);
             --$offset;
         } else {
-            $xml = simplexml_load_file($file);
+            $xml = simplexml_load_file($file, SimpleXMLElement::class, LIBXML_NOERROR | LIBXML_ERR_NONE);
             $mails[] = [
                 'link' => '/' . MAIL_DIR . '/' . pathinfo($file, PATHINFO_FILENAME) . '.' . pathinfo($file, PATHINFO_EXTENSION),
                 'subject' => (string)reset($xml->xpath('.//*[@id = \'subject\']')),
